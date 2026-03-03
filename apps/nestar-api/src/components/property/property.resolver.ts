@@ -144,3 +144,4 @@ export class PropertyResolver {
 		return this.propertyService.removePropertyByAdmin(propertyId);
 	}
 }
+
