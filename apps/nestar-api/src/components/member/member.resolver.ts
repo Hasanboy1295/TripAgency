@@ -37,6 +37,31 @@ export class MemberResolver {
 		}
 	}
 
+	@Mutation(() => Member)
+	public async telegramLogin(
+		@Args('telegramId') telegramId: string,
+		@Args('username') username: string,
+	): Promise<Member> {
+		try {
+			console.log('Mutation: telegramLogin', { telegramId, username });
+			return await this.memberService.telegramLogin(telegramId, username);
+		} catch (err) {
+			console.log('Error telegramLogin', err);
+			throw new InternalServerErrorException(err);
+		}
+	}
+
+	@Mutation(() => Member)
+	public async phoneLogin(@Args('phone') phone: string): Promise<Member> {
+		try {
+			console.log('Mutation: phoneLogin', { phone });
+			return await this.memberService.phoneLogin(phone);
+		} catch (err) {
+			console.log('Error phoneLogin', err);
+			throw new InternalServerErrorException(err);
+		}
+	}
+
 	@UseGuards(AuthGuard)
 	@Query(() => String)
 	public async checkAuth(@AuthMember('memberNick') memberNick: string): Promise<string> {

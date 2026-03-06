@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Member, Members } from '../../libs/dto/member/member';
 import { AgentsInquiry, LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
-import { MemberStatus, MemberType } from '../../libs/enums/member.enum';
+import { MemberAuthType, MemberStatus, MemberType } from '../../libs/enums/member.enum';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
@@ -18,6 +18,7 @@ import { loopupAuthMemberLiked } from '../../libs/config';
 
 @Injectable()
 export class MemberService {
+	// phoneLogin method removed due to duplicate implementation.
 	constructor(
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		@InjectModel('Follow') private readonly followModel: Model<Follower | Following>,
@@ -57,6 +58,62 @@ export class MemberService {
 		response.accessToken = await this.authService.createToken(response);
 
 		return response;
+	}
+
+	public async telegramLogin(telegramId: string, username: string): Promise<Member> {
+		// Check if member exists with this Telegram ID
+		let member: Member = await this.memberModel
+			.findOne({ memberNick: `tg_${telegramId}` })
+			.exec();
+
+		if (!member) {
+			// Create new member with Telegram auth
+			const newMember: MemberInput = {
+				memberNick: `tg_${telegramId}`,
+				memberPassword: telegramId, // Use Telegram ID as password
+				memberPhone: '', // Optional
+				memberType: MemberType.USER,
+				memberAuthType: MemberAuthType.PHONE
+			};
+			member = await this.signup(newMember);
+		} else if (member.memberStatus === MemberStatus.DELETE) {
+			throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
+		} else if (member.memberStatus === MemberStatus.BLOCK) {
+			throw new InternalServerErrorException(Message.BLOCKED_USER);
+		}
+
+		// Generate access token
+		member.accessToken = await this.authService.createToken(member);
+
+		return member;
+	}
+
+	public async phoneLogin(phone: string): Promise<Member> {
+		// Check if member exists with this phone
+		let member: Member = await this.memberModel
+			.findOne({ memberPhone: phone })
+			.exec();
+
+		if (!member) {
+			// Create new member with phone auth
+			const newMember: MemberInput = {
+				memberNick: `phone_${phone.slice(-4)}_${Date.now()}`,
+				memberPassword: phone, // Use phone as password
+				memberPhone: phone,
+				memberType: MemberType.USER,
+				memberAuthType: MemberAuthType.PHONE
+			};
+			member = await this.signup(newMember);
+		} else if (member.memberStatus === MemberStatus.DELETE) {
+			throw new InternalServerErrorException(Message.NO_MEMBER_NICK);
+		} else if (member.memberStatus === MemberStatus.BLOCK) {
+			throw new InternalServerErrorException(Message.BLOCKED_USER);
+		}
+
+		// Generate access token
+		member.accessToken = await this.authService.createToken(member);
+
+		return member;
 	}
 
 	public async updateMember(memberId: ObjectId, input: MemberUpdate): Promise<Member> {
