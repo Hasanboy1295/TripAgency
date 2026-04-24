@@ -108,6 +108,23 @@ export class CommentService {
 
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
+		// Bump commentViews for every review that was actually delivered to the
+		// client on this request. Fire-and-forget — we don't want a view counter
+		// update blocking the read path.
+		const shownIds = (result[0]?.list ?? []).map((c: any) => c._id);
+		if (shownIds.length) {
+			this.commentModel
+				.updateMany({ _id: { $in: shownIds } }, { $inc: { commentViews: 1 } })
+				.exec()
+				.catch(() => {
+					/* swallow — view count is best-effort */
+				});
+			// Reflect the bump in the response so the client doesn't need a refetch.
+			for (const c of result[0].list as any[]) {
+				c.commentViews = (c.commentViews ?? 0) + 1;
+			}
+		}
+
 		return result[0];
 	}
 

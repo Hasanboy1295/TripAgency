@@ -23,6 +23,9 @@ export class Comment {
 	@Field(() => String)
 	memberId: ObjectId;
 
+	@Field(() => Int)
+	commentViews: number;
+
 	@Field(() => Date)
 	createdAt: Date;
 
