@@ -4,6 +4,10 @@ export enum PropertyType {
 	APARTMENT = 'APARTMENT',
 	VILLA = 'VILLA',
 	HOUSE = 'HOUSE',
+
+	BATCH = 'BATCH',
+	LUXURY = 'LUXURY',
+	CITY = 'CITY',
 }
 registerEnumType(PropertyType, {
 	name: 'PropertyType',
@@ -28,6 +32,18 @@ export enum PropertyLocation {
 	CHONJU = 'CHONJU',
 	DAEJON = 'DAEJON',
 	JEJU = 'JEJU',
+
+    TURKEY = 'TURKEY',
+	BALI = 'BALI',
+	BANGKOK = 'BANGKOK',
+	KOREA = 'KOREA',
+	SINGAPORE = 'SINGAPORE',
+	ITALY = 'ITALY',
+	GERMANY = 'GERMANY',
+	UBEKISTAN = 'UBEKISTAN',
+	PARIS = 'PARIS',
+	TOKYO = 'TOKYO',
+	DUBAI = 'DUBAI',
 }
 registerEnumType(PropertyLocation, {
 	name: 'PropertyLocation',

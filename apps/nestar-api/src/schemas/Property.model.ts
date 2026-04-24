@@ -36,10 +36,6 @@ const PropertySchema = new Schema(
 			required: true,
 		},
 
-		propertySquare: {
-			type: Number,
-			required: true,
-		},
 
 		propertyBeds: {
 			type: Number,

@@ -154,7 +154,7 @@ export class PropertyService {
 
 		if (pricesRange) match.propertyPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
 		if (periodsRange) match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end };
-		if (squaresRange) match.propertySquare = { $gte: squaresRange.start, $lte: squaresRange.end };
+
 
 		if (text) match.propertyTitle = { $regex: new RegExp(text, 'i') };
 		if (options) {
