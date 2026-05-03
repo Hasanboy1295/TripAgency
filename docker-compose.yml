@@ -1,30 +1,29 @@
 services:
-  nestar-api:
-    container_name: nestar-api
+  trip-agency:
+    container_name: trip-agency
     restart: always
     image: node:20.10.0
     ports:
-      - 4001:3007
+      - 3030:3027
     volumes:
-      - ./:/usr/src/nestar
-    working_dir: /usr/src/nestar
+      - ./:/usr/src/tripout
+    working_dir: /usr/src/tripout
 
     networks:
       - monorepo-network
 
     # FOR PRODUCTION
-    command: bash -c "rm -f dist && npm install && npm run build && npm run start:prod"
+    command: bash -c "rm -rf dist && npm install && npm run build && npm run start:prod"
 
-  nestar-batch:
-    container_name: nestar-batch
+  tripout-batch:
+    container_name: tripout-batch
     restart: unless-stopped
     image: node:20.10.0
     ports:
       - 4002:3008
     volumes:
-      - ./:/usr/src/nestar
-    working_dir: /usr/src/nestar
-
+      - ./:/usr/src/tripout
+    working_dir: /usr/src/tripout
     networks:
       - monorepo-network
 
@@ -35,5 +34,5 @@ networks:
   monorepo-network:
     driver: bridge
 # nestar-next:  localhost:4000 <=> container:3000
-# nestar-api:   localhost:4001 <=> container:3007
+# nestar-api:   localhost:4001 <=> container:3040
 # nestar-batch: localhost:4002 <=> container:3008
