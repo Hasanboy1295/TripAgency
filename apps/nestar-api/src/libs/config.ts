@@ -1,4 +1,4 @@
-import { ObjectId } from 'bson';
+import { Types } from 'mongoose';
 
 export const availableAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
 export const availableMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
@@ -26,7 +26,7 @@ export const getSerialForImage = (filename: string) => {
 };
 
 export const shapeIntoMongoObjectId = (target: any) => {
-	return typeof target === 'string' ? new ObjectId(target) : target;
+	return typeof target === 'string' ? new Types.ObjectId(target) : target;
 };
 
 // Complex aggregation
