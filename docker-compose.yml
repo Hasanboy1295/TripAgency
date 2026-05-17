@@ -4,7 +4,9 @@ services:
     restart: always
     image: node:20.10.0
     ports:
-      - 3030:3027
+      - 3030:3000
+    environment:
+      - MONGO_PROD=${MONGO_PROD}
     volumes:
       - ./:/usr/src/tripout
     working_dir: /usr/src/tripout
@@ -21,6 +23,9 @@ services:
     image: node:20.10.0
     ports:
       - 4002:3008
+    environment:
+      - PORT_BATCH=3008
+      - MONGO_PROD=${MONGO_PROD}
     volumes:
       - ./:/usr/src/tripout
     working_dir: /usr/src/tripout
